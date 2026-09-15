@@ -1,0 +1,26 @@
+eval:
+  defaults:
+    input_key: prompt
+    label_key: label
+    max_response_len: 24576
+    temperature: 1.0
+    top_p: 0.95
+  datasets:
+    - name: aime24
+      path: /path/to/aime_2024.jsonl
+      n_samples_per_eval_prompt: 32
+    - name: aime25
+      path: /path/to/aime_2025.jsonl
+      n_samples_per_eval_prompt: 32
+    - name: aime26
+      path: /path/to/aime_2026.jsonl
+      n_samples_per_eval_prompt: 32
+    - name: amc23
+      path: /path/to/amc23.jsonl
+      n_samples_per_eval_prompt: 32
+    - name: math500
+      path: /path/to/math500.jsonl
+      n_samples_per_eval_prompt: 32
+    - name: minervamath
+      path: /path/to/minervamath.jsonl
+      n_samples_per_eval_prompt: 32
