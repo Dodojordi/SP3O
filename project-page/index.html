@@ -86,12 +86,12 @@
 
       <figure class="paper-figure" data-lightbox>
         <img src="assets/img/training-profiles.png" alt="Value Flattening across training checkpoints" loading="lazy">
-        <figcaption><strong>Figure 1.</strong> Value Flattening across training in a Qwen3-4B-Base PPO run on DAPO-Math-17k. Across checkpoints, Monte Carlo values exhibit sharp local transitions while PPO critic profiles remain comparatively flat.</figcaption>
+        <figcaption><strong>Figure 1.</strong> Value Flattening across training in a Qwen3-4B-Base PPO run on DAPO-Math-17k. Each panel shows a different correct or incorrect response selected for a large local change in Monte Carlo (MC) value. Across checkpoints, the MC profiles change sharply while the corresponding PPO critic predictions remain comparatively flat.</figcaption>
       </figure>
 
-      <figure class="paper-figure" data-lightbox>
+      <figure class="paper-figure figure-2" data-lightbox>
         <img src="assets/img/value-flattening.png" alt="Value Flattening in LLM reasoning and FrozenLake" loading="lazy">
-        <figcaption><strong>Figure 2.</strong> Value Flattening in LLM reasoning and stochastic FrozenLake. Predicted changes remain concentrated near zero, and critic value maps become progressively smoother as the state space grows.</figcaption>
+        <figcaption><strong>Figure 2.</strong> Value Flattening in LLM reasoning and stochastic FrozenLake. <strong>(a)</strong> Adjacent critic-value changes remain near zero even when MC values change substantially. <strong>(b)</strong> Ground-truth and learned critic value maps as the maze size increases. <strong>(c)</strong> Larger state spaces lead to smoother predictions, weaker value resolution, and higher error.</figcaption>
       </figure>
     </section>
 
@@ -128,7 +128,7 @@
 
         <figure class="paper-figure" data-lightbox>
           <img src="assets/img/representation-gradients.png" alt="Representation and gradient analysis" loading="lazy">
-          <figcaption><strong>Figure 3.</strong> Representation and gradient analysis in Qwen3-4B-Base PPO critic supervision. Critic states occupy a compact region, alignment remains high throughout training, and gradient similarity decreases with token-position separation.</figcaption>
+          <figcaption><strong>Figure 3.</strong> Representation and gradient analysis in Qwen3-4B-Base PPO critic supervision. <strong>(a)</strong> PCA projections show that critic representations occupy a much more compact region than actor representations for the same response. <strong>(b)</strong> Representation alignment, gradient alignment, and update energy remain high during training, while critic-gradient similarity decreases as supervised token positions move farther apart.</figcaption>
         </figure>
       </div>
     </section>
@@ -139,14 +139,14 @@
         <div><h2>SP³O: Method and Results</h2><p>SP³O keeps the actor objective, rollout procedure, and return targets unchanged. It applies critic loss only at a few well-separated states, reducing both the variance penalty and redundant neighboring updates.</p></div>
       </div>
 
-      <figure class="paper-figure" data-lightbox>
+      <figure class="paper-figure figure-4" data-lightbox>
         <img src="assets/img/value-recovery.png" alt="Effects of SP3O on critic prediction" loading="lazy">
-        <figcaption><strong>Figure 4.</strong> Effects on critic prediction in Qwen3-4B-Base. SP³O follows policy-conditioned Monte Carlo values more closely and reduces response-centered value error.</figcaption>
+        <figcaption><strong>Figure 4.</strong> Effects on critic prediction in Qwen3-4B-Base. <strong>(a)</strong> For matched prompts, the SP³O critic follows the direction and magnitude of its own-policy MC values more closely than the PPO critic. <strong>(b)</strong> Across prompts, SP³O reduces response-centered MSE at 30%, 60%, and 90% response progress.</figcaption>
       </figure>
 
       <figure class="paper-figure" data-lightbox>
         <img src="assets/img/critic-optimization.png" alt="Effects of SP3O on critic optimization" loading="lazy">
-        <figcaption><strong>Figure 5.</strong> Effects on critic optimization. SP³O preserves within-response variation, increases representation effective rank, and reduces value-head gradient discrepancy.</figcaption>
+        <figcaption><strong>Figure 5.</strong> Effects on critic optimization in Qwen3-4B-Base. <strong>(a)</strong> SP³O improves response-level outcome discrimination while preserving within-response value variation. <strong>(b)</strong> It shifts the effective-rank distribution of critic hidden states upward. <strong>(c)</strong> It reduces the discrepancy between value-head gradients induced by terminal-return and MC targets.</figcaption>
       </figure>
 
       <div class="table-block">
@@ -189,7 +189,7 @@
 
       <figure class="paper-figure" data-lightbox>
         <img src="assets/img/online-dynamics.png" alt="Online learning dynamics and actor updates" loading="lazy">
-        <figcaption><strong>Figure 6.</strong> Online learning dynamics on Qwen3-4B-Base. SP³O produces smaller within-iteration actor changes while maintaining higher validation accuracy and rollout reward.</figcaption>
+        <figcaption><strong>Figure 6.</strong> Online learning dynamics on Qwen3-4B-Base. <strong>(a)</strong> SP³O produces smaller and less variable within-iteration actor updates. <strong>(b–c)</strong> It maintains higher validation accuracy and rollout reward after the early training stage. <strong>(d)</strong> SP³O also generates longer responses than standard PPO.</figcaption>
       </figure>
     </section>
 
@@ -203,7 +203,7 @@
         <div class="ablation-layout">
           <figure class="paper-figure" data-lightbox>
             <img src="assets/img/anchor-count.png" alt="Effect of critic supervision density" loading="lazy">
-            <figcaption><strong>Figure 7.</strong> Effect of critic-supervision density on performance. Three anchors achieve the highest mean training reward.</figcaption>
+            <figcaption><strong>Figure 7.</strong> Effect of critic-supervision density on performance. Sparse configurations with 3–8 supervised states outperform denser variants and token-level PPO. Mean training reward is highest with three well-separated anchors and declines as supervision becomes denser.</figcaption>
           </figure>
 
           <div class="table-block compact-table">
