@@ -18,6 +18,6 @@ Expected URL: <https://dodojordi.github.io/SP3O/>.
 
 ## Updating the paper
 
-- Replace `assets/paper.pdf` with the latest manuscript.
-- Update the BibTeX block in `index.html` once an arXiv identifier is available.
+- The Paper buttons link to [arXiv:2609.18708](https://arxiv.org/abs/2609.18708), so the repository does not carry a duplicate PDF.
+- Keep the BibTeX block in `index.html` synchronized with the arXiv record.
 - Web figures are rendered from the paper source PDFs into `assets/img/`.
