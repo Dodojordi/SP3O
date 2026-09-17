@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07110f"><meta name="description" content="SP³O mitigates Value Flattening in PPO critics with sparse, well-separated supervision states.">
+  <meta property="og:type" content="website"><meta property="og:title" content="SP³O — Rethinking Critic Learning in PPO"><meta property="og:description" content="Understanding and mitigating Value Flattening with sparse critic supervision."><meta property="og:image" content="assets/img/value-flattening.png"><meta name="twitter:card" content="summary_large_image">
+  <title>SP³O — Rethinking Critic Learning in PPO</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/style.css"><script defer src="assets/site.js"></script>
+</head>
+<body>
+  <div class="page-glow glow-one" aria-hidden="true"></div><div class="page-glow glow-two" aria-hidden="true"></div>
+  <header class="site-header" data-header>
+    <a class="brand" href="#top" aria-label="SP3O home"><span class="brand-mark">SP<sup>3</sup>O</span><span class="brand-divider"></span><span class="brand-label">Sparse critic learning</span></a>
+    <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false" data-nav-toggle><span></span><span></span></button>
+    <nav class="site-nav" data-nav><a href="#problem">Problem</a><a href="#method">Method</a><a href="#results">Results</a><a href="#citation">Citation</a><a class="nav-code" href="https://github.com/Dodojordi/SP3O" target="_blank" rel="noreferrer">GitHub ↗</a></nav>
+  </header>
+
+  <main id="top">
+    <section class="hero shell">
+      <div class="hero-copy reveal">
+        <div class="eyebrow"><span class="pulse-dot"></span> Reinforcement learning · critic optimization</div>
+        <h1>Rethinking Critic<br>Learning in <em>PPO</em></h1>
+        <p class="hero-subtitle">Understanding and Mitigating <strong>Value Flattening</strong></p>
+        <div class="authors" aria-label="Paper authors"><span><a href="https://github.com/Dodojordi">Yizhuo Li</a><sup>1,2*</sup></span><span>Jianhao Yan<sup>3*</sup></span><span>Yun Luo<sup>2†‡</sup></span><span>Zhi Wang<sup>4</sup></span><span>Futing Wang<sup>2</sup></span><span>Rong-Xi Tan<sup>2,4</sup></span><span>Kanghui Tian<sup>2</sup></span><span>Ganqu Cui<sup>2</sup></span><span>Ning Ding<sup>5</sup></span><span>Peilin Zhao<sup>1‡</sup></span><span>Yafu Li<sup>2,6‡</sup></span><span>Yu Cheng<sup>7‡</sup></span></div>
+        <p class="affiliations"><span><sup>1</sup> Shanghai Jiao Tong University</span><span><sup>2</sup> Shanghai AI Laboratory</span><span><sup>3</sup> Westlake University</span><span><sup>4</sup> Nanjing University</span><span><sup>5</sup> Tsinghua University</span><span><sup>6</sup> The Chinese University of Hong Kong</span><span><sup>7</sup> Nanyang Technological University</span></p>
+        <p class="author-notes"><sup>*</sup> Equal contribution &nbsp; <sup>†</sup> Project lead &nbsp; <sup>‡</sup> Corresponding authors</p>
+        <div class="hero-actions">
+          <a class="button primary" href="assets/paper.pdf" target="_blank"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6zM14 2v5h5M9 13h6M9 17h6M9 9h2"/></svg>Paper</a>
+          <a class="button" href="https://github.com/Dodojordi/SP3O" target="_blank" rel="noreferrer"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3.3-.4 6.8-1.6 6.8-7.4A5.8 5.8 0 0 0 19.3 3 5.4 5.4 0 0 0 19.1 0S17.9-.4 15 1.5a14 14 0 0 0-6 0C6.1-.4 4.9 0 4.9 0a5.4 5.4 0 0 0-.2 3A5.8 5.8 0 0 0 3.2 7c0 5.8 3.5 7 6.8 7.4A4.8 4.8 0 0 0 9 18v4M9 19c-3 .9-3-1.5-4.2-2"/></svg>Code</a>
+          <a class="button" href="#citation"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M7 17H4a2 2 0 0 1-2-2v-4a6 6 0 0 1 6-6v3a3 3 0 0 0-3 3h2zm12 0h-3a2 2 0 0 1-2-2v-4a6 6 0 0 1 6-6v3a3 3 0 0 0-3 3h2z"/></svg>BibTeX</a>
+        </div>
+      </div>
+      <div class="hero-visual reveal" data-delay="120"><div class="signal-card">
+        <div class="signal-top"><span>Within-response value profile</span><span class="live-label"><i></i> critic signal</span></div>
+        <svg class="signal-chart" viewBox="0 0 720 420" role="img" aria-label="Stylized state value profiles showing flat PPO critic and expressive SP3O critic">
+          <defs><linearGradient id="areaGlow" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff9f43" stop-opacity=".3"/><stop offset="1" stop-color="#ff9f43" stop-opacity="0"/></linearGradient><filter id="lineGlow"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+          <g class="grid-lines"><path d="M52 55H682M52 130H682M52 205H682M52 280H682M52 355H682"/><path d="M52 55V355M178 55V355M304 55V355M430 55V355M556 55V355M682 55V355"/></g>
+          <path class="area-path" d="M52 291L105 257L158 279L211 192L264 214L317 143L370 183L423 119L476 227L529 172L582 82L635 116L682 66V355H52Z"/><path class="mc-line" d="M52 291L105 257L158 279L211 192L264 214L317 143L370 183L423 119L476 227L529 172L582 82L635 116L682 66"/><path class="ppo-line" d="M52 286C140 282 196 293 272 287S401 292 476 286S591 291 682 282"/><path class="sp3o-line" d="M52 302C98 278 140 270 184 251S252 219 304 198S370 187 420 157S478 208 528 175S598 118 682 86" filter="url(#lineGlow)"/><g class="anchors"><circle cx="241" cy="224" r="7"/><circle cx="430" cy="157" r="7"/><circle cx="619" cy="106" r="7"/></g><g class="chart-labels"><text x="52" y="391">response progress</text><text x="650" y="391">100%</text></g>
+        </svg>
+        <div class="chart-legend"><span><i class="legend-mc"></i> MC value</span><span><i class="legend-ppo"></i> PPO critic</span><span><i class="legend-sp3o"></i> SP³O critic</span></div>
+        <div class="metric-strip"><div><strong>3</strong><span>anchors<br>per response</span></div><div><strong>+7.97</strong><span>math avg.<br>vs. PPO</span></div><div><strong>+7.33</strong><span>OOD avg.<br>vs. PPO</span></div></div>
+      </div></div>
+    </section>
+
+    <section class="marquee" aria-label="Key ideas"><div class="marquee-track"><span>VALUE FLATTENING</span><i>✦</i><span>SPARSE SUPERVISION</span><i>✦</i><span>BETTER CREDIT ASSIGNMENT</span><i>✦</i><span>STABLE POLICY UPDATES</span><i>✦</i><span>VALUE FLATTENING</span><i>✦</i><span>SPARSE SUPERVISION</span><i>✦</i><span>BETTER CREDIT ASSIGNMENT</span><i>✦</i><span>STABLE POLICY UPDATES</span><i>✦</i></div></section>
+
+    <section class="content-section shell" id="abstract">
+      <div class="section-kicker reveal">01 / Abstract</div>
+      <div class="abstract-layout"><h2 class="display-heading reveal">A critic should see the<br><span>turning points.</span></h2><div class="abstract-copy reveal" data-delay="90"><p class="lead">In reinforcement learning for large language models, PPO relies on a critic to estimate state values and reduce the variance of policy updates.</p><p>We uncover <strong>Value Flattening</strong>: Monte Carlo state values can change sharply across intermediate reasoning states, while critic predictions remain comparatively flat. Our analysis connects this failure mode to an implicit variance penalty in the critic loss and redundant updates from temporally correlated states.</p><p><strong>SP³O</strong> changes only where the value loss is applied—supervising a few well-separated states per response. With as few as three supervised states, it improves within-response value resolution and consistently strengthens the learned policy across model sizes and evaluation suites.</p></div></div>
+    </section>
+
+    <section class="content-section shell" id="problem">
+      <div class="section-heading reveal"><div><div class="section-kicker">02 / The failure mode</div><h2>Values change.<br>Critics barely do.</h2></div><p>Across LLM reasoning trajectories and a controlled FrozenLake environment, dense PPO supervision systematically loses within-response value resolution.</p></div>
+      <figure class="paper-figure reveal" data-lightbox><img src="assets/img/value-flattening.png" alt="Value Flattening diagnostics in LLM reasoning and FrozenLake" loading="lazy"><figcaption><span>Fig. 1</span> Value Flattening in LLM reasoning and stochastic FrozenLake. Click to enlarge.</figcaption></figure>
+      <div class="insight-grid"><article class="insight-card reveal"><div class="insight-number">A</div><h3>Flat local signal</h3><p>Predicted changes concentrate near zero even when Monte Carlo values shift sharply.</p></article><article class="insight-card reveal" data-delay="70"><div class="insight-number">B</div><h3>Scaling failure</h3><p>Critic value maps become progressively smoother as the FrozenLake state space grows.</p></article><article class="insight-card reveal" data-delay="140"><div class="insight-number">C</div><h3>Distorted advantages</h3><p>States with meaningfully different success probabilities receive nearly identical predictions.</p></article></div>
+    </section>
+
+    <section class="content-section method-section" id="method"><div class="shell">
+      <div class="section-heading reveal"><div><div class="section-kicker">03 / Method</div><h2>Sparse by design.<br>Dense in signal.</h2></div><p>SP³O keeps the actor objective, rollout procedure, and return targets unchanged. It only changes the states that receive critic loss.</p></div>
+      <div class="method-board reveal">
+        <div class="method-copy"><span class="method-tag">SParse Proximal Policy Optimization</span><h3>Supervise a few,<br>well-separated states.</h3><p>Fewer positions restrict the per-response variance penalty. Wider spacing reduces duplicated gradients from neighboring states that share nearly all of their token history.</p><div class="equation" aria-label="Sparse critic objective"><span>ℒ<sub>V</sub><sup>SP³O</sup>(ϕ) =</span><span class="fraction"><span>1</span><span>Σ<sub>τ∈ℬ</sub> |ℐ(τ)|</span></span><span>Σ<sub>τ∈ℬ</sub> Σ<sub>t∈ℐ(τ)</sub> (V<sub>ϕ</sub>(s<sub>t</sub>) − Ĝ<sub>t</sub>)²</span></div></div>
+        <div class="anchor-demo"><div class="demo-head"><span>Critic supervision map</span><span>response →</span></div><div class="dense-row"><span class="row-label">PPO</span><div class="tokens"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><small>dense, correlated updates</small></div><div class="sparse-row"><span class="row-label">SP<sup>3</sup>O</span><div class="sparse-track"><div class="track-line"></div><i style="--position:30%"><b>0.3</b></i><i style="--position:60%"><b>0.6</b></i><i style="--position:90%"><b>0.9</b></i></div><small>sparse, separated updates</small></div><div class="demo-note"><span>Same rollout</span><span>Same actor objective</span><span>Same return targets</span></div></div>
+      </div>
+      <div class="cause-grid"><article class="cause-card reveal"><span>01</span><div><h3>Implicit variance penalty</h3><p>When every position shares the terminal return target, dense MSE directly penalizes variation in predicted values within the response.</p></div></article><article class="cause-card reveal" data-delay="80"><span>02</span><div><h3>Redundant temporal updates</h3><p>Adjacent LLM states differ by one token. Their similar representations yield aligned critic gradients and duplicated training signal.</p></div></article></div>
+    </div></section>
+
+    <section class="content-section shell" id="results">
+      <div class="section-heading reveal"><div><div class="section-kicker">04 / Results</div><h2>Less supervision.<br>Stronger policies.</h2></div><p>SP³O improves standard PPO on both mathematical and out-of-distribution reasoning, while producing more stable within-iteration actor updates.</p></div>
+      <div class="score-grid">
+        <article class="score-card accent-card reveal"><div class="score-head"><span>Qwen3-4B-Base</span><span>Math avg@32</span></div><strong>45.57</strong><i>%</i><div class="score-bars"><div><span>PPO</span><b><i style="--score:82.5%"></i></b><em>37.60</em></div><div><span>GRPO</span><b><i style="--score:86.2%"></i></b><em>39.26</em></div><div class="best"><span>SP³O</span><b><i style="--score:100%"></i></b><em>45.57</em></div></div></article>
+        <article class="score-card reveal" data-delay="60"><div class="score-head"><span>Qwen3-4B-Base</span><span>OOD avg@4</span></div><strong>59.28</strong><i>%</i><div class="score-bars"><div><span>PPO</span><b><i style="--score:87.6%"></i></b><em>51.95</em></div><div><span>GRPO</span><b><i style="--score:95.2%"></i></b><em>56.44</em></div><div class="best"><span>SP³O</span><b><i style="--score:100%"></i></b><em>59.28</em></div></div></article>
+        <article class="score-card reveal" data-delay="120"><div class="score-head"><span>Qwen3-8B-Base</span><span>Math / OOD</span></div><strong>50.51</strong><i>%</i><div class="dual-stat"><div><span>Math avg@32</span><b>+2.01</b><small>vs. PPO</small></div><div><span>OOD avg@4</span><b>+1.99</b><small>vs. PPO</small></div></div></article>
+      </div>
+      <div class="figure-split"><figure class="paper-figure reveal" data-lightbox><img src="assets/img/online-dynamics.png" alt="Online learning dynamics comparing PPO and SP3O" loading="lazy"><figcaption><span>Fig. 2</span> Online learning dynamics and within-iteration actor updates.</figcaption></figure><div class="result-note reveal" data-delay="100"><span class="big-number">3</span><h3>anchors are enough.</h3><p>Sparse configurations with 3–8 supervised states outperform denser variants and token-level PPO. Performance peaks at three anchors.</p><figure data-lightbox><img src="assets/img/anchor-count.png" alt="Effect of critic-supervision density on performance" loading="lazy"><figcaption>Effect of supervision density. Click to enlarge.</figcaption></figure></div></div>
+    </section>
+
+    <section class="content-section recovery-section"><div class="shell"><div class="recovery-layout"><div class="recovery-copy reveal"><div class="section-kicker">05 / Value resolution</div><h2>The critic learns<br>to see again.</h2><p>Compared with standard PPO, the SP³O critic follows the direction and magnitude of policy-conditioned Monte Carlo values more closely.</p><ul><li><strong>36%</strong> lower MSE at 30% response progress</li><li><strong>11%</strong> lower MSE at 60% response progress</li><li><strong>21%</strong> lower MSE at 90% response progress</li></ul></div><figure class="paper-figure reveal" data-delay="100" data-lightbox><img src="assets/img/value-recovery.png" alt="Critic prediction effects comparing PPO and SP3O" loading="lazy"><figcaption><span>Fig. 3</span> Prompt-matched critic profiles and response-centered value error.</figcaption></figure></div></div></section>
+
+    <section class="content-section shell" id="gallery">
+      <div class="section-heading reveal"><div><div class="section-kicker">06 / Analysis gallery</div><h2>Inside the critic.</h2></div><p>Additional evidence from training-stage profiles, representation geometry, critic optimization, and anchor placement.</p></div>
+      <div class="gallery-grid"><figure class="gallery-card gallery-tall reveal" data-lightbox><img src="assets/img/training-profiles.png" alt="Value Flattening profiles across training checkpoints" loading="lazy"><figcaption><span>Training stages</span> Value profiles across correct and incorrect responses.</figcaption></figure><figure class="gallery-card reveal" data-lightbox><img src="assets/img/critic-optimization.png" alt="Critic optimization effects" loading="lazy"><figcaption><span>Optimization</span> Discrimination, effective rank, and gradient discrepancy.</figcaption></figure><figure class="gallery-card reveal" data-lightbox><img src="assets/img/representation-gradients.png" alt="Representation and gradient analysis" loading="lazy"><figcaption><span>Geometry</span> Hidden representations and gradient alignment.</figcaption></figure><figure class="gallery-card reveal" data-lightbox><img src="assets/img/anchor-placement.png" alt="Anchor position ablation" loading="lazy"><figcaption><span>Ablation</span> Fixed, well-spaced anchors outperform random placement.</figcaption></figure></div>
+    </section>
+
+    <section class="content-section citation-section" id="citation"><div class="shell citation-layout"><div class="reveal"><div class="section-kicker">07 / Citation</div><h2>Build on SP³O.</h2><p>If this work helps your research, please cite the paper and star the repository.</p><a class="text-link" href="https://github.com/Dodojordi/SP3O" target="_blank" rel="noreferrer">Explore the implementation ↗</a></div><div class="code-card reveal" data-delay="80"><div class="code-bar"><span>BIBTEX</span><button type="button" data-copy-bib><span class="copy-default">Copy</span><span class="copy-done">Copied ✓</span></button></div><pre><code id="bibtex">@article{li2026rethinking,
+  title   = {Rethinking Critic Learning in PPO:
+             Understanding and Mitigating Value Flattening},
+  author  = {Li, Yizhuo and Yan, Jianhao and Luo, Yun and
+             Wang, Zhi and Wang, Futing and Tan, Rong-Xi and
+             Tian, Kanghui and Cui, Ganqu and Ding, Ning and
+             Zhao, Peilin and Li, Yafu and Cheng, Yu},
+  year    = {2026},
+  note    = {Preprint}
+}</code></pre></div></div></section>
+  </main>
+  <footer class="site-footer"><div><span class="brand-mark">SP<sup>3</sup>O</span><p>Sparse supervision for sharper critics.</p></div><div class="footer-links"><a href="assets/paper.pdf">Paper</a><a href="https://github.com/Dodojordi/SP3O">Code</a><a href="#top">Back to top ↑</a></div><p class="credit">Design structure inspired by the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank" rel="noreferrer">Academic Project Page Template</a>.</p></footer>
+  <dialog class="lightbox" data-lightbox-dialog><button type="button" aria-label="Close image">×</button><img src="" alt=""><p></p></dialog>
+</body>
+</html>

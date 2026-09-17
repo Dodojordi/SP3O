@@ -1,0 +1,15 @@
+const header=document.querySelector('[data-header]');
+const nav=document.querySelector('[data-nav]');
+const toggle=document.querySelector('[data-nav-toggle]');
+const updateHeader=()=>header?.classList.toggle('is-scrolled',scrollY>24);
+updateHeader();addEventListener('scroll',updateHeader,{passive:true});
+toggle?.addEventListener('click',()=>{const open=nav.classList.toggle('is-open');toggle.setAttribute('aria-expanded',String(open))});
+nav?.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{nav.classList.remove('is-open');toggle?.setAttribute('aria-expanded','false')}));
+document.querySelectorAll('.reveal').forEach(el=>{if(el.dataset.delay)el.style.setProperty('--delay',`${el.dataset.delay}ms`)});
+if('IntersectionObserver' in window){const observer=new IntersectionObserver((entries,watcher)=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');watcher.unobserve(entry.target)}}),{rootMargin:'0px 0px -8% 0px',threshold:.08});document.querySelectorAll('.reveal').forEach(el=>observer.observe(el))}else document.querySelectorAll('.reveal').forEach(el=>el.classList.add('is-visible'));
+const copy=document.querySelector('[data-copy-bib]');
+copy?.addEventListener('click',async()=>{const text=document.querySelector('#bibtex')?.textContent??'';try{await navigator.clipboard.writeText(text)}catch{const selection=getSelection(),range=document.createRange();range.selectNodeContents(document.querySelector('#bibtex'));selection.removeAllRanges();selection.addRange(range);document.execCommand('copy');selection.removeAllRanges()}const card=copy.closest('.code-card');card.classList.add('copied');setTimeout(()=>card.classList.remove('copied'),1800)});
+const dialog=document.querySelector('[data-lightbox-dialog]'),dialogImage=dialog?.querySelector('img'),dialogCaption=dialog?.querySelector('p');
+document.querySelectorAll('[data-lightbox]').forEach(figure=>figure.addEventListener('click',()=>{const image=figure.querySelector('img');if(!image||!dialog)return;dialogImage.src=image.src;dialogImage.alt=image.alt;dialogCaption.textContent=figure.querySelector('figcaption')?.textContent??image.alt;dialog.showModal()}));
+dialog?.querySelector('button')?.addEventListener('click',()=>dialog.close());
+dialog?.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
