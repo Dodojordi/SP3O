@@ -140,11 +140,6 @@
         <div><h2>SP³O: Method and Results</h2><p>SP³O keeps the actor objective, rollout procedure, and return targets unchanged. It applies critic loss only at a few well-separated states, reducing both the variance penalty and redundant neighboring updates.</p></div>
       </div>
 
-      <div class="method-summary">
-        <div><span>PPO</span><div class="dense-marks" aria-label="Dense PPO supervision"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><small>loss at every state</small></div>
-        <div><span>SP<sup>3</sup>O</span><div class="sparse-marks" aria-label="Sparse SP3O supervision"><i style="left:30%"></i><i style="left:60%"></i><i style="left:90%"></i></div><small>loss at 0.3 / 0.6 / 0.9</small></div>
-      </div>
-
       <figure class="paper-figure" data-lightbox>
         <img src="assets/img/value-recovery.png" alt="Effects of SP3O on critic prediction" loading="lazy">
         <figcaption><strong>Figure 4.</strong> Effects on critic prediction in Qwen3-4B-Base. SP³O follows policy-conditioned Monte Carlo values more closely and reduces response-centered value error.</figcaption>
