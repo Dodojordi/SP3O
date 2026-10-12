@@ -34,9 +34,15 @@ set +a
 DRY_RUN=1 bash examples/sp3o/train_sp3o.sh
 ```
 
-The local `sp3o_math` reward reproduces the rule-based boxed-answer path used
-for training. It never calls an external judge or sends prompts over the
-network.
+The local `sp3o_math` reward matches slime_B's `compute_score_p1` with
+`use_xverify=False`. Its bundled answer extraction, MathD normalization, and
+SymPy rules preserve the original numeric rounding/tolerance, boolean-answer
+mapping, and pi handling, including permissive cases such as accepting `2.9`
+against `3`. These rules are retained for experiment compatibility rather than
+strict mathematical grading. Scoring runs in a worker thread to avoid blocking
+the rollout event loop. It never calls an external judge or Math Verify and
+requires no slime_B checkout. The historical `scored_by="math_verify"` label is
+retained for log compatibility; it does not indicate a Math Verify call.
 
 ## 3. Main runs
 

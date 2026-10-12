@@ -77,9 +77,9 @@ async def async_rm(args, sample: Sample, **kwargs):
         from .sp3o_math import compute_score
 
         points = metadata.get("points")
-        if not isinstance(points, list):
+        if not (isinstance(points, list) and all(isinstance(point, float) for point in points)):
             points = None
-        return compute_score(response, label, points=points)
+        return await asyncio.to_thread(compute_score, response, label, points=points)
     elif rm_type == "math":
         return 1 if grade_answer_verl(response, label) else 0
     elif rm_type == "f1":

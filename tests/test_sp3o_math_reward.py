@@ -33,7 +33,7 @@ def test_multiple_answers_and_points():
 
     assert result["score"] == 0.5
     assert result["point"] == 3.0
-    assert result["scored_by"] == ["rule", "wrong"]
+    assert result["scored_by"] == ["math_verify", "wrong"]
 
 
 def test_missing_box_is_incorrect():
@@ -54,3 +54,35 @@ def test_reward_hub_dispatches_to_local_sp3o_scorer():
     result = asyncio.run(async_rm(args, sample))
 
     assert result["score"] == 1.0
+
+
+@pytest.mark.parametrize(
+    "prediction,target",
+    [("2.001", "2"), ("2.9", "3"), ("0.333", "1/3"), ("3.14", "\\pi"), ("YES", "TRUE")],
+)
+def test_p1_reward_compatibility(prediction, target):
+    # Retain even P1's permissive rounding: tightening it changes rewards.
+    assert compute_score("\\boxed{" + prediction + "}", [target])["score"] == 1.0
+
+
+def test_repeated_think_markers_match_p1():
+    response = "<think>reasoning</think>\\boxed{2}</think>\\boxed{3}"
+    assert compute_score(response, ["3"])["score"] == 0.0
+
+
+def test_reward_dispatch_runs_off_event_loop(monkeypatch):
+    import threading
+    from slime.rollout.rm_hub import sp3o_math
+
+    event_loop_thread = threading.get_ident()
+    scorer_threads = []
+
+    def score(*args, **kwargs):
+        scorer_threads.append(threading.get_ident())
+        return {"score": 1.0}
+
+    monkeypatch.setattr(sp3o_math, "compute_score", score)
+    sample = Sample(response="\\boxed{42}", label=["42"])
+    args = Namespace(custom_rm_path=None, rm_type="sp3o_math")
+    assert asyncio.run(async_rm(args, sample))["score"] == 1.0
+    assert scorer_threads and scorer_threads[0] != event_loop_thread
